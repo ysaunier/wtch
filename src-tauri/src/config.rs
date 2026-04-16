@@ -372,6 +372,24 @@ impl Config {
     /// Returns the three shells that are always available unless overridden by the user.
     fn builtin_shells() -> HashMap<String, ShellConfig> {
         let mut map = HashMap::new();
+
+        // Cross-platform: bash is available everywhere
+        map.insert(
+            "bash".to_string(),
+            ShellConfig {
+                command: "bash".to_string(),
+                args: vec!["-c".to_string()],
+            },
+        );
+        map.insert(
+            "sh".to_string(),
+            ShellConfig {
+                command: "sh".to_string(),
+                args: vec!["-c".to_string()],
+            },
+        );
+
+        // Windows-specific
         map.insert(
             "cmd".to_string(),
             ShellConfig {
@@ -393,6 +411,7 @@ impl Config {
                 args: vec!["-e".to_string(), "bash".to_string(), "-ic".to_string()],
             },
         );
+
         map
     }
 
@@ -598,7 +617,16 @@ shells:
         let mut config: Config = serde_yaml::from_str(yaml_str).expect("should parse");
         config.apply_builtin_shells();
 
-        // Built-in shells must be present
+        // Cross-platform shells must be present
+        let bash = config.shells.get("bash").expect("bash shell must exist");
+        assert_eq!(bash.command, "bash");
+        assert_eq!(bash.args, vec!["-c"]);
+
+        let sh = config.shells.get("sh").expect("sh shell must exist");
+        assert_eq!(sh.command, "sh");
+        assert_eq!(sh.args, vec!["-c"]);
+
+        // Windows shells must be present
         let cmd = config.shells.get("cmd").expect("cmd shell must exist");
         assert_eq!(cmd.command, "cmd.exe");
         assert_eq!(cmd.args, vec!["/C"]);

@@ -53,11 +53,13 @@ watch:
 
 Built-in shells are always available:
 
-| Name | Command | Args |
-|------|---------|------|
-| `cmd` | `cmd.exe` | `/C` |
-| `powershell` | `powershell.exe` | `-NoProfile -Command` |
-| `wsl` | `wsl.exe` | `--` |
+| Name | Command | Args | Platform |
+|------|---------|------|----------|
+| `bash` | `bash` | `-c` | All |
+| `sh` | `sh` | `-c` | All |
+| `cmd` | `cmd.exe` | `/C` | Windows |
+| `powershell` | `powershell.exe` | `-NoProfile -Command` | Windows |
+| `wsl` | `wsl.exe` | `-e bash -ic` | Windows (WSL) |
 
 You can define custom shells:
 
