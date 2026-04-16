@@ -4,7 +4,7 @@ import type { AppState, PresetInfo } from "../types";
 import { useTheme } from "../composables/useTheme";
 import type { Theme } from "../composables/useTheme";
 
-type Tab = "presets" | "order" | "actions";
+type Tab = "presets" | "order" | "actions" | "about";
 
 const props = defineProps<{
   state: AppState;
@@ -20,6 +20,7 @@ const presets = ref<PresetInfo[]>([]);
 const presetSearch = ref("");
 const loading = ref(false);
 const debugMode = ref(false);
+const appVersion = ref("0.0.0");
 const { currentTheme, setTheme } = useTheme();
 const themeOptions: { value: Theme; label: string }[] = [
   { value: "system", label: "System" },
@@ -54,6 +55,14 @@ onMounted(async () => {
   await refreshPresets();
   const dbg = await tauriInvoke<boolean>("get_debug");
   if (dbg !== null) debugMode.value = dbg;
+  try {
+    if (window.__TAURI_INTERNALS__) {
+      const { getVersion } = await import("@tauri-apps/api/app");
+      appVersion.value = await getVersion();
+    }
+  } catch {
+    appVersion.value = "0.0.0";
+  }
 });
 
 // Re-fetch presets when state changes (after reload)
@@ -104,6 +113,16 @@ async function onToggleDebug(): Promise<void> {
   await tauriInvoke("set_debug", { enabled: newVal });
   debugMode.value = newVal;
 }
+
+function openUrl(url: string): void {
+  if (window.__TAURI_INTERNALS__) {
+    import("@tauri-apps/plugin-shell")
+      .then(({ open }) => open(url))
+      .catch(() => window.open(url, "_blank", "noopener,noreferrer"));
+  } else {
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+}
 </script>
 
 <template>
@@ -124,6 +143,11 @@ async function onToggleDebug(): Promise<void> {
         :class="{ 'tab--active': activeTab === 'actions' }"
         @click="activeTab = 'actions'"
       >Config</button>
+      <button
+        class="tab"
+        :class="{ 'tab--active': activeTab === 'about' }"
+        @click="activeTab = 'about'"
+      >About</button>
     </nav>
 
     <div class="tab-body">
@@ -225,6 +249,35 @@ async function onToggleDebug(): Promise<void> {
         <button class="action-btn" @click="onReloadConfig" :disabled="loading">
           {{ loading ? "Reloading..." : "Reload config" }}
         </button>
+      </div>
+
+      <!-- About -->
+      <div v-if="activeTab === 'about'" class="tab-content about-content">
+        <div class="about-header">
+          <div class="about-logo">W</div>
+          <div class="about-name">wtch</div>
+          <div class="about-version">v{{ appVersion }}</div>
+        </div>
+        <div class="about-desc">
+          Lightweight system tray app for monitoring cloud services.
+        </div>
+        <div class="actions-divider" />
+        <button class="action-btn" @click="openUrl('https://github.com/ysaunier/wtch')">
+          GitHub
+        </button>
+        <button class="action-btn" @click="openUrl('https://github.com/ysaunier/wtch/issues')">
+          Report an issue
+        </button>
+        <div class="actions-divider" />
+        <button class="action-btn" @click="openUrl('https://ysaunier.dev')">
+          ysaunier.dev
+        </button>
+        <button class="action-btn about-btn-coffee" @click="openUrl('https://buymeacoffee.com/ysaunier')">
+          Buy me a coffee
+        </button>
+        <div class="about-footer">
+          Made by Yoann Saunier
+        </div>
       </div>
     </div>
   </div>
@@ -460,5 +513,70 @@ async function onToggleDebug(): Promise<void> {
   height: 1px;
   background: var(--border);
   margin: 6px 0;
+}
+
+.about-content {
+  align-items: center;
+}
+
+.about-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 0 8px;
+}
+
+.about-logo {
+  width: 48px;
+  height: 48px;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.about-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.about-version {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.about-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 0 8px 4px;
+}
+
+.about-btn-coffee {
+  background: #ffdd00;
+  border-color: #ffdd00;
+  color: #1a1a1a;
+  font-weight: 500;
+  text-align: center;
+}
+
+.about-btn-coffee:hover {
+  background: #e6c800;
+  border-color: #e6c800;
+}
+
+.about-footer {
+  font-size: 10px;
+  color: var(--text-secondary);
+  opacity: 0.5;
+  text-align: center;
+  padding-top: 8px;
 }
 </style>
