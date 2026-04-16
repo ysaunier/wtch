@@ -69,7 +69,7 @@ async function onMinimize(): Promise<void> {
 async function onQuit(): Promise<void> {
   if (window.__TAURI_INTERNALS__) {
     const { invoke } = await import("@tauri-apps/api/core");
-    invoke("plugin:process|exit", { code: 0 });
+    invoke("quit_app");
   }
 }
 </script>

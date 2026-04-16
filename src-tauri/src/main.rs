@@ -1,7 +1,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use serde::Serialize;
-use tauri::State;
+use tauri::{AppHandle, State};
 use wtch::config::Config;
 use wtch::preset::resolve_preset;
 use wtch::scheduler::{start_scheduler, SharedConfig};
@@ -174,6 +174,12 @@ async fn reload_config(
     Ok(())
 }
 
+/// Exits the application.
+#[tauri::command]
+fn quit_app(app: AppHandle) {
+    app.exit(0);
+}
+
 fn main() {
     let mut config = Config::load().unwrap_or_default();
     wtch::logging::init(config.general.debug);
@@ -210,7 +216,8 @@ fn main() {
             open_config_dir,
             get_debug,
             set_debug,
-            reload_config
+            reload_config,
+            quit_app
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
