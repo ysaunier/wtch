@@ -28,6 +28,24 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Extract version from tag
+        id: version
+        shell: bash
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Sync version in project files
+        shell: bash
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          # package.json
+          sed -i.bak "s/\"version\": \".*\"/\"version\": \"$VERSION\"/" package.json
+          # tauri.conf.json
+          sed -i.bak "s/\"version\": \".*\"/\"version\": \"$VERSION\"/" src-tauri/tauri.conf.json
+          # Cargo.toml (only the first occurrence under [package])
+          sed -i.bak "0,/^version = \".*\"/s//version = \"$VERSION\"/" src-tauri/Cargo.toml
+          # Cleanup backup files (macOS sed creates .bak)
+          find . -name "*.bak" -delete
+
       - name: Install Linux dependencies
         if: matrix.platform == 'ubuntu-22.04'
         run: |

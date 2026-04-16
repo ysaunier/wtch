@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/nicegram/nicegram-web/refs/heads/master/nicegram-website/src-tauri/gen/schemas/desktop-schema.json",
   "productName": "wtch",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "identifier": "dev.ysaunier.wtch",
   "build": {
     "frontendDist": "../dist",
