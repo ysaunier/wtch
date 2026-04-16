@@ -1,6 +1,18 @@
-# wtch
+<p align="center">
+  <img src="src-tauri/icons/128x128.png" alt="wtch" width="80" />
+</p>
 
-A lightweight system tray app for monitoring the status of cloud services, built with [Tauri](https://tauri.app/) and [Vue](https://vuejs.org/).
+<h1 align="center">wtch</h1>
+
+<p align="center">A lightweight system tray app for monitoring the status of cloud services, built with <a href="https://tauri.app/">Tauri</a> and <a href="https://vuejs.org/">Vue</a>.</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Rust-1.70+-orange?logo=rust" alt="Rust" />
+  <img src="https://img.shields.io/badge/Vue-3-42b883?logo=vuedotjs" alt="Vue 3" />
+  <img src="https://img.shields.io/badge/Tauri-2-24c8db?logo=tauri" alt="Tauri 2" />
+  <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-blue" alt="Platform" />
+  <img src="https://img.shields.io/badge/License-MIT-yellow" alt="MIT License" />
+</p>
 
 ![wtch screenshot](docs/images/wtch.png)
 
@@ -17,10 +29,7 @@ Click the tray icon to see the status of your services at a glance. Expand any s
 
 ## Getting started
 
-```sh
-npm install
-make dev
-```
+Download from [Releases](https://github.com/ysaunier/wtch/releases) or [build from source](INSTALL.md).
 
 See [docs/configuration.md](docs/configuration.md) for config examples and adapter details.
 
