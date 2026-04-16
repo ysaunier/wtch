@@ -1,0 +1,75 @@
+name: Bug Report
+description: Report a bug or unexpected behavior
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Before submitting, please check:**
+        - [ ] I searched existing issues and this is not a duplicate
+        - [ ] I am using the latest version of wtch
+
+        > **WARNING:** Do not paste API keys, tokens, passwords, or any sensitive data in this issue.
+        > Review your logs and config carefully before posting. The maintainer is not responsible for any secrets you expose publicly.
+
+  - type: input
+    id: version
+    attributes:
+      label: wtch version
+      description: Found in Settings > About
+      placeholder: "v1.0.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      options:
+        - Windows
+        - macOS
+        - Linux
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the bug clearly.
+      placeholder: "When I click X, Y happens instead of Z..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should have happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Configuration (wtch.yml)
+      description: |
+        Paste the relevant parts of your config.
+        **Remove any API keys, tokens, or passwords before pasting.**
+      render: yaml
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Debug logs
+      description: |
+        Enable debug mode in Settings > Config, reproduce the issue, then paste the log file content.
+        Log file location: `~/.config/wtch/<date>.log`
+        **Review the logs and remove any sensitive data before pasting.**
+      render: text
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain the problem.

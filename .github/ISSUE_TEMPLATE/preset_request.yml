@@ -1,0 +1,35 @@
+name: Preset Request
+description: Request a new service preset
+labels: ["preset"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Want a new service added to the built-in presets?
+
+  - type: input
+    id: service
+    attributes:
+      label: Service name
+      placeholder: "e.g. Datadog, PagerDuty, Stripe"
+    validations:
+      required: true
+
+  - type: input
+    id: status_url
+    attributes:
+      label: Status page URL
+      placeholder: "e.g. https://status.datadog.com"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Status page type (if known)
+      options:
+        - Atlassian StatusPage
+        - Instatus
+        - StatusCast
+        - status.io
+        - Custom / Unknown
