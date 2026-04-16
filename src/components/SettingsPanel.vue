@@ -55,9 +55,13 @@ onMounted(async () => {
   await refreshPresets();
   const dbg = await tauriInvoke<boolean>("get_debug");
   if (dbg !== null) debugMode.value = dbg;
-  if (window.__TAURI_INTERNALS__) {
-    const { getVersion } = await import("@tauri-apps/api/app");
-    appVersion.value = await getVersion();
+  try {
+    if (window.__TAURI_INTERNALS__) {
+      const { getVersion } = await import("@tauri-apps/api/app");
+      appVersion.value = await getVersion();
+    }
+  } catch {
+    appVersion.value = "0.0.0";
   }
 });
 
@@ -114,9 +118,9 @@ function openUrl(url: string): void {
   if (window.__TAURI_INTERNALS__) {
     import("@tauri-apps/plugin-shell")
       .then(({ open }) => open(url))
-      .catch(() => window.open(url, "_blank"));
+      .catch(() => window.open(url, "_blank", "noopener,noreferrer"));
   } else {
-    window.open(url, "_blank");
+    window.open(url, "_blank", "noopener,noreferrer");
   }
 }
 </script>
