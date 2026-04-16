@@ -8,6 +8,10 @@ Pre-built binaries are available on the [Releases](https://github.com/ysaunier/w
 - **macOS** (.dmg) - Apple Silicon and Intel
 - **Linux** (.deb / .AppImage)
 
+> **Windows:** SmartScreen may warn about an "unrecognized app" since the binary is not code-signed. Click "More info" then "Run anyway" to proceed.
+>
+> **macOS:** You may need to right-click the app and select "Open" on first launch, or allow it in System Settings > Privacy & Security.
+
 ## Build from source
 
 ### Prerequisites

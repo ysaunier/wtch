@@ -49,4 +49,4 @@ Inspired by [stts](https://github.com/inket/stts) by [@inket](https://github.com
 
 ## License
 
-[MIT](LICENSE) - Yoann Saunier
+[MIT](LICENSE) - Yoann Saunier | [Privacy Policy](PRIVACY.md) | [Install](INSTALL.md)
