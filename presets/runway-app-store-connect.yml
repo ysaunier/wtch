@@ -1,0 +1,25 @@
+name: 'Runway: App Store Connect'
+type: adapter
+adapter: urn:wtch:adapter:html
+url: https://runway-asc.betteruptime.com
+interval: 60s
+adapter_config:
+  mode: css
+  selector: h1 svg
+  extract: class
+  status_map:
+    text-statuspage-green: success
+    text-statuspage-yellow: warning
+    text-statuspage-red: error
+    text-statuspage-blue: maintenance
+conditions:
+  error: '.status.indicator == "major" or .status.indicator == "critical"'
+  warning: '.status.indicator == "minor"'
+  maintenance: '.status.indicator == "maintenance"'
+  success: '.status.indicator == "none"'
+display:
+  style: status
+  description: "{{ .status.description }}"
+  details_from: .components
+  detail_title: .name
+  detail_status: .status

@@ -1,0 +1,36 @@
+# Homelab monitoring: local services + cloud dependencies
+general:
+  poll_interval: "30s"
+  default_shell: wsl
+  notify: true
+  notify_cooldown: "5m"
+
+groups:
+  Local:
+    - Jellyfin
+    - Pi-hole
+    - Portfolio
+  Cloud:
+    - GitHub
+    - Cloudflare
+
+watch:
+  # Local services (HTTP health checks)
+  - name: Jellyfin
+    type: http
+    url: http://localhost:8096
+    interval: "30s"
+
+  - name: Pi-hole
+    type: http
+    url: http://192.168.0.10/admin
+    interval: "30s"
+
+  - name: Portfolio
+    type: http
+    url: https://ysaunier.dev
+    interval: "1m"
+
+  # Cloud presets
+  - preset: github
+  - preset: cloudflare

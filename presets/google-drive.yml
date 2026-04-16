@@ -1,0 +1,7 @@
+name: Google Drive
+type: adapter
+adapter: urn:wtch:adapter:google
+url: https://www.google.com/appsstatus/dashboard
+interval: 120s
+adapter_config:
+  product_id: "VHNA7p3Z5p3iakj5sA8V"

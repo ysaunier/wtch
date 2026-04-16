@@ -1,0 +1,16 @@
+name: Sketch
+type: adapter
+adapter: urn:wtch:adapter:html
+url: https://status.sketch.com
+interval: 60s
+adapter_config:
+  mode: script_json
+  script_selector: script
+  script_match: activeIncidents
+  json_regex: window\.__NEXT_DATA__\s*=\s*(\{.*?\});?
+  status_field: .props.pageProps.summary.status
+  status_map:
+    UP: success
+    HASISSUES: warning
+    UNDERMAINTENANCE: maintenance
+    DOWNTIME: error

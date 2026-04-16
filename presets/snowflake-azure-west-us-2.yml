@@ -1,0 +1,13 @@
+name: Snowflake Azure - West US 2 (Washington)
+type: adapter
+adapter: urn:wtch:adapter:statuspage
+url: https://status.snowflake.com
+link: https://status.snowflake.com
+interval: 120s
+adapter_config:
+  group_id: "82yb1rhk9qwt"
+display:
+  style: status
+  details_from: .components
+  detail_title: .name
+  detail_status: .status

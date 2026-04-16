@@ -1,0 +1,15 @@
+name: Airship (EU)
+type: adapter
+adapter: urn:wtch:adapter:html
+url: https://status.airship.eu
+interval: 60s
+adapter_config:
+  mode: css
+  selector: .status-list-component-status-text
+  extract: class
+  status_map:
+    component-available: success
+    component-unavailable: error
+    component-degraded: warning
+    component-maintenance: maintenance
+    component-investigating: warning

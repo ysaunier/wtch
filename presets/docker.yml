@@ -1,0 +1,26 @@
+name: Docker
+type: adapter
+adapter: urn:wtch:adapter:json
+url: https://api.status.io/1.0/status/533c6539221ae15e3f000031
+link: https://www.dockerstatus.com
+interval: 60s
+adapter_config:
+  url_suffix: ''
+  status_field: .result.status_overall.status_code
+  description_field: .result.status_overall.status
+  status_map:
+    '100': success
+    '200': maintenance
+    '300': warning
+    '400': warning
+    '500': error
+    '600': error
+  components_field: .result.status
+  component_name: .name
+  component_status: .status_code
+display:
+  style: status
+  description: "{{ .status.description }}"
+  details_from: .components
+  detail_title: .name
+  detail_status: .status

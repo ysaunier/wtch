@@ -1,0 +1,14 @@
+name: Civo
+type: adapter
+adapter: urn:wtch:adapter:json
+url: https://status.civo.com
+interval: 60s
+adapter_config:
+  url_suffix: /index.json
+  status_field: .summaryStatus
+  status_map:
+    ok: success
+    down: warning
+    disrupted: error
+    notice: warning
+    maintenance: maintenance

@@ -1,0 +1,15 @@
+name: Intercom - AU Hosting
+type: adapter
+adapter: urn:wtch:adapter:html
+url: https://www.intercomstatus.com/au-hosting
+interval: 60s
+adapter_config:
+  mode: css
+  selector: '[data-testid=''heads-up''] svg'
+  extract: class
+  status_map:
+    text-icon-operational: success
+    text-icon-degraded-performance: warning
+    text-icon-partial-outage: warning
+    text-icon-full-outage: error
+    text-icon-under-maintenance: maintenance

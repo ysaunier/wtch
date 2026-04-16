@@ -1,0 +1,5 @@
+# Minimal config: just presets
+watch:
+  - preset: github
+  - preset: openai
+  - preset: cloudflare

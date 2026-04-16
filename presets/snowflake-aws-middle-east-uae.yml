@@ -1,0 +1,13 @@
+name: Snowflake AWS - Middle East (UAE)
+type: adapter
+adapter: urn:wtch:adapter:statuspage
+url: https://status.snowflake.com
+link: https://status.snowflake.com
+interval: 120s
+adapter_config:
+  group_id: "zj1swj7jqr03"
+display:
+  style: status
+  details_from: .components
+  detail_title: .name
+  detail_status: .status

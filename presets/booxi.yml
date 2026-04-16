@@ -1,0 +1,14 @@
+name: Booxi
+type: adapter
+adapter: urn:wtch:adapter:html
+url: https://status.booxi.com
+interval: 60s
+adapter_config:
+  mode: css
+  selector: .system-status
+  extract: class
+  status_map:
+    type-none: success
+    type-minor: warning
+    type-major: error
+    type-scheduled: maintenance

@@ -1,0 +1,12 @@
+name: Pipedrive
+type: adapter
+adapter: urn:wtch:adapter:json
+url: https://status.pipedrive.com
+interval: 60s
+adapter_config:
+  status_field: .components[0].state
+  status_map:
+    operational: success
+    degraded: error
+    partially-degraded: warning
+    under_maintenance: maintenance

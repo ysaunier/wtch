@@ -1,0 +1,7 @@
+name: NotebookLM
+type: adapter
+adapter: urn:wtch:adapter:google
+url: https://www.google.com/appsstatus/dashboard
+interval: 120s
+adapter_config:
+  product_id: "sqTm5ZmzCmb66kvyzcNS"

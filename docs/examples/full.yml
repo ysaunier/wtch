@@ -1,0 +1,166 @@
+# Full example showcasing every config feature
+general:
+  poll_interval: "60s"
+  default_shell: wsl
+  notify: true
+  notify_cooldown: "5m"
+
+# Custom shells (cmd, powershell, wsl are always built-in)
+shells:
+  ubuntu:
+    command: wsl.exe
+    args: ["-d", "Ubuntu", "--"]
+  bash:
+    command: bash
+    args: ["-c"]
+
+# Groups organize watches visually in the UI
+groups:
+  SaaS:
+    - GitHub
+    - OpenAI
+    - Gmail
+  Infrastructure:
+    - Snowflake AWS Canada
+    - GCP Montreal
+  Custom:
+    - Claude Usage
+    - Public IP
+    - Uptime
+
+watch:
+  # Simple preset
+  - preset: github
+
+  # Preset with overrides
+  - preset: openai
+    interval: "2m"
+    expand: true
+
+  # Individual Google service preset
+  - preset: gmail
+
+  # Regional presets
+  - preset: snowflake-aws-canada-central
+  - preset: gcp-northamerica-northeast1
+
+  # Script watch: claude-usage --json
+  # Requires a custom script that scrapes https://claude.ai/settings/usage
+  # and outputs JSON like:
+  # {
+  #   "plan": "Max (5x)",
+  #   "bars": [
+  #     {"label": "Session actuelle", "percentage": 61, "reset": "..."},
+  #     {"label": "Tous les modeles", "percentage": 13, "reset": "..."},
+  #     {"label": "Sonnet seulement", "percentage": 4, "reset": "..."},
+  #     {"label": "Routines quotidiennes", "percentage": 0, "reset": ""},
+  #     {"label": "Usage supplementaire", "percentage": 100, "reset": "..."}
+  #   ]
+  # }
+  - name: Claude Usage
+    type: script
+    command: claude-usage --json
+    shell: wsl
+    format: json
+    interval: "5m"
+    link: https://console.anthropic.com
+    expand: true
+    notify: true
+    conditions:
+      error: ".bars[0].percentage > 90"
+      warning: ".bars[0].percentage > 70"
+      success: ".bars[0].percentage <= 70"
+    display:
+      style: progress
+      title: Claude
+      description: "{{ .bars[0].percentage }}% ({{ .bars[0].reset }})"
+      value: ".bars[0].percentage"
+      max: "100"
+    details:
+      - title: "{{ .bars[1].label }}"
+        style: progress
+        value: ".bars[1].percentage"
+        max: "100"
+        description: "{{ .bars[1].reset }}"
+      - title: "{{ .bars[2].label }}"
+        style: progress
+        value: ".bars[2].percentage"
+        max: "100"
+        description: "{{ .bars[2].reset }}"
+      - title: "{{ .bars[4].label }}"
+        style: progress
+        value: ".bars[4].percentage"
+        max: "100"
+        description: "{{ .bars[4].reset }}"
+
+  # Script watch: raw value output shown as text
+  - name: Public IP
+    type: script
+    command: curl -s ifconfig.me
+    shell: wsl
+    format: value
+    display:
+      style: text
+      title: IP
+      content: "{{ .value }}"
+
+  # Script watch: exit code only (0 = success, else error)
+  - name: Uptime
+    type: script
+    command: uptime -p
+    shell: wsl
+    format: value
+    display:
+      style: text
+      title: Uptime
+      content: "{{ .value }}"
+
+  # PowerShell watch: Windows disk usage (all drives with details)
+  # Uses Get-CimInstance to query disk info and outputs JSON
+  - name: Disk Usage
+    type: script
+    shell: powershell
+    format: json
+    interval: "5m"
+    command: >-
+      $d = Get-CimInstance Win32_LogicalDisk -Filter 'DriveType=3' |
+      ForEach-Object { [PSCustomObject]@{
+        drive=$_.DeviceID;
+        total=[math]::Round($_.Size/1GB,1);
+        free=[math]::Round($_.FreeSpace/1GB,1);
+        used=[math]::Round(($_.Size-$_.FreeSpace)/1GB,1);
+        pct=[math]::Round(($_.Size-$_.FreeSpace)/$_.Size*100,0)
+      }};
+      $worst = ($d | Measure-Object -Property pct -Maximum).Maximum;
+      @{worst=$worst; drives=$d} | ConvertTo-Json -Depth 3
+    conditions:
+      error: ".worst > 90"
+      warning: ".worst > 75"
+      success: ".worst <= 75"
+    display:
+      style: progress
+      title: Disks
+      description: "{{ .worst }}% worst"
+      value: .worst
+      max: "100"
+      details_from: .drives
+      detail_style: progress
+      detail_title: .drive
+      detail_value: .pct
+      detail_max: "100"
+      detail_description: "{{ .free }}G free / {{ .total }}G"
+
+  # HTTP watch: simple health check
+  - name: Portfolio
+    type: http
+    url: https://ysaunier.dev
+    interval: "30s"
+
+  # HTTP watch: with custom headers and env var expansion
+  - name: Private API
+    type: http
+    url: https://api.internal.example.com/status
+    interval: "30s"
+    headers:
+      Authorization: "Bearer ${API_TOKEN}"
+      X-Team: "devops"

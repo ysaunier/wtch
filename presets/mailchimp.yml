@@ -1,0 +1,12 @@
+name: MailChimp
+type: adapter
+adapter: urn:wtch:adapter:json
+url: https://status.mailchimp.com
+interval: 60s
+adapter_config:
+  status_field: .TestData[0].Status
+  status_map:
+    Up: success
+    Degraded: warning
+    Down: error
+    Maintenance: maintenance

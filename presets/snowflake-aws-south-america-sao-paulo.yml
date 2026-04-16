@@ -1,0 +1,13 @@
+name: Snowflake AWS - South America (Sao Paulo)
+type: adapter
+adapter: urn:wtch:adapter:statuspage
+url: https://status.snowflake.com
+link: https://status.snowflake.com
+interval: 120s
+adapter_config:
+  group_id: "bcj6s2tbwg9y"
+display:
+  style: status
+  details_from: .components
+  detail_title: .name
+  detail_status: .status

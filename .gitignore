@@ -1,0 +1,26 @@
+node_modules/
+dist/
+src-tauri/target/
+
+# IA
+.claude/
+.superpowers/
+/docs/superpowers/
+CLAUDE.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build output
+*.exe
+*.msi
+*.dmg
+*.AppImage
+*.deb

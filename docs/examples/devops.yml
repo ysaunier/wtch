@@ -1,0 +1,126 @@
+# DevOps team: infrastructure monitoring with regional focus
+general:
+  poll_interval: "60s"
+  default_shell: wsl
+  notify: true
+  notify_cooldown: "10m"
+
+shells:
+  ubuntu:
+    command: wsl.exe
+    args: ["-d", "Ubuntu", "--"]
+
+groups:
+  CI/CD:
+    - GitHub
+    - GitLab
+    - Docker
+  Cloud (Canada):
+    - Snowflake AWS - Canada (Central)
+    - GCP Montreal (northamerica-northeast1)
+    - 1Password Canada
+  Monitoring:
+    - Disk Usage
+    - Public IP
+    - API Health
+
+watch:
+  # CI/CD presets
+  - preset: github
+  - preset: gitlab
+  - preset: docker
+
+  # Region-specific presets
+  - preset: snowflake-aws-canada-central
+  - preset: gcp-northamerica-northeast1
+  - preset: 1password-canada
+
+  # PowerShell: Windows disk usage (all drives)
+  - name: Disk Usage
+    type: script
+    shell: powershell
+    format: json
+    interval: "5m"
+    command: >-
+      $d = Get-CimInstance Win32_LogicalDisk -Filter 'DriveType=3' |
+      ForEach-Object { [PSCustomObject]@{
+        drive=$_.DeviceID;
+        total=[math]::Round($_.Size/1GB,1);
+        free=[math]::Round($_.FreeSpace/1GB,1);
+        used=[math]::Round(($_.Size-$_.FreeSpace)/1GB,1);
+        pct=[math]::Round(($_.Size-$_.FreeSpace)/$_.Size*100,0)
+      }};
+      $worst = ($d | Measure-Object -Property pct -Maximum).Maximum;
+      @{worst=$worst; drives=$d} | ConvertTo-Json -Depth 3
+    conditions:
+      error: ".worst > 90"
+      warning: ".worst > 75"
+      success: ".worst <= 75"
+    display:
+      style: progress
+      title: Disks
+      description: "{{ .worst }}% worst"
+      value: .worst
+      max: "100"
+      details_from: .drives
+      detail_style: progress
+      detail_title: .drive
+      detail_value: .pct
+      detail_max: "100"
+      detail_description: "{{ .free }}G free / {{ .total }}G"
+
+  # Claude API usage (requires claude-usage script, see docs/claude-usage.md)
+  - name: Claude Usage
+    type: script
+    command: claude-usage --json
+    shell: wsl
+    format: json
+    interval: "5m"
+    link: https://console.anthropic.com
+    expand: true
+    notify: true
+    conditions:
+      error: ".bars[0].percentage > 90"
+      warning: ".bars[0].percentage > 70"
+      success: ".bars[0].percentage <= 70"
+    display:
+      style: progress
+      title: Claude
+      description: "{{ .bars[0].percentage }}% ({{ .bars[0].reset }})"
+      value: ".bars[0].percentage"
+      max: "100"
+    details:
+      - title: "{{ .bars[1].label }}"
+        style: progress
+        value: ".bars[1].percentage"
+        max: "100"
+        description: "{{ .bars[1].reset }}"
+      - title: "{{ .bars[2].label }}"
+        style: progress
+        value: ".bars[2].percentage"
+        max: "100"
+        description: "{{ .bars[2].reset }}"
+      - title: "{{ .bars[4].label }}"
+        style: progress
+        value: ".bars[4].percentage"
+        max: "100"
+        description: "{{ .bars[4].reset }}"
+
+  # Custom script: show public IP as text
+  - name: Public IP
+    type: script
+    command: curl -s ifconfig.me
+    shell: wsl
+    format: value
+    display:
+      style: text
+      title: IP
+      content: "{{ .value }}"
+
+  # Custom HTTP: private API with auth header
+  - name: API Health
+    type: http
+    url: https://api.internal.example.com/health
+    interval: "30s"
+    headers:
+      Authorization: "Bearer ${API_TOKEN}"

@@ -1,0 +1,13 @@
+name: Snowflake Azure - Central India (Pune)
+type: adapter
+adapter: urn:wtch:adapter:statuspage
+url: https://status.snowflake.com
+link: https://status.snowflake.com
+interval: 120s
+adapter_config:
+  group_id: "yqpb0tl1l0q7"
+display:
+  style: status
+  details_from: .components
+  detail_title: .name
+  detail_status: .status

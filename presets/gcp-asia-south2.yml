@@ -1,0 +1,13 @@
+name: GCP Delhi (asia-south2)
+type: adapter
+adapter: urn:wtch:adapter:google
+url: https://status.cloud.google.com
+link: https://status.cloud.google.com
+interval: 120s
+adapter_config:
+  location_id: "asia-south2"
+display:
+  style: status
+  details_from: .components
+  detail_title: .name
+  detail_status: .status

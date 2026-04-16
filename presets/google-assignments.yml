@@ -1,0 +1,7 @@
+name: Assignments
+type: adapter
+adapter: urn:wtch:adapter:google
+url: https://www.google.com/appsstatus/dashboard
+interval: 120s
+adapter_config:
+  product_id: "PLFsrXYB4bT2ACfki9x3"

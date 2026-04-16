@@ -1,0 +1,14 @@
+name: Codacy
+type: adapter
+adapter: urn:wtch:adapter:json
+url: https://status.codacy.com
+interval: 60s
+adapter_config:
+  url_suffix: /api/components
+  status_field: .[0].status
+  status_map:
+    Operational: success
+    Under Maintenance: maintenance
+    Degraded Performance: warning
+    Partial Outage: warning
+    Major Outage: error

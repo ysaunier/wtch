@@ -1,0 +1,14 @@
+name: Runway
+type: adapter
+adapter: urn:wtch:adapter:html
+url: https://status.runway.team
+interval: 60s
+adapter_config:
+  mode: css
+  selector: .status-page__overview-icon svg, h1 svg
+  extract: class
+  status_map:
+    operational: success
+    degraded: warning
+    downtime: error
+    maintenance: maintenance

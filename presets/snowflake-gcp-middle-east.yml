@@ -1,0 +1,13 @@
+name: Snowflake GCP - Middle East (Dammam)
+type: adapter
+adapter: urn:wtch:adapter:statuspage
+url: https://status.snowflake.com
+link: https://status.snowflake.com
+interval: 120s
+adapter_config:
+  group_id: "z8v7r3t5y0kd"
+display:
+  style: status
+  details_from: .components
+  detail_title: .name
+  detail_status: .status

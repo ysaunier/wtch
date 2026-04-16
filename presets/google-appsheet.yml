@@ -1,0 +1,7 @@
+name: AppSheet
+type: adapter
+adapter: urn:wtch:adapter:google
+url: https://www.google.com/appsstatus/dashboard
+interval: 120s
+adapter_config:
+  product_id: "FWjKi5U7KX4FUUPThHAJ"

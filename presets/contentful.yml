@@ -1,0 +1,16 @@
+name: Contentful
+type: adapter
+adapter: urn:wtch:adapter:statuspage
+url: https://www.contentfulstatus.com
+interval: 60s
+conditions:
+  error: '.status.indicator == "major" or .status.indicator == "critical"'
+  warning: '.status.indicator == "minor"'
+  maintenance: '.status.indicator == "maintenance"'
+  success: '.status.indicator == "none"'
+display:
+  style: status
+  description: "{{ .status.description }}"
+  details_from: .components
+  detail_title: .name
+  detail_status: .status
