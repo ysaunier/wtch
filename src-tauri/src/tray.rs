@@ -86,6 +86,7 @@ pub fn setup_tray(app: &AppHandle) -> tauri::Result<()> {
                             y as i32,
                         ));
                         let _ = window.show();
+                        let _ = window.set_skip_taskbar(true);
                         let _ = window.set_focus();
                     }
                 }

@@ -26,11 +26,6 @@
         "shadow": false
       }
     ],
-    "trayIcon": {
-      "iconPath": "icons/tray-grey.png",
-      "iconAsTemplate": false,
-      "tooltip": "wtch"
-    },
     "security": {
       "csp": null
     }
