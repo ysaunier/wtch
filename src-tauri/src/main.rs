@@ -98,15 +98,8 @@ async fn get_debug(config: State<'_, SharedConfig>) -> Result<bool, String> {
     Ok(config.read().await.general.debug)
 }
 
-/// Toggles debug logging. Writes `debug: true/false` to the config file.
-#[tauri::command]
-async fn set_debug(enabled: bool, config: State<'_, SharedConfig>) -> Result<(), String> {
-    {
-        let mut cfg = config.write().await;
-        cfg.general.debug = enabled;
-    }
-    wtch::logging::init(enabled);
-
+/// Writes a key/value into the `general` section of the config file.
+fn write_general_setting(key: &str, value: serde_yaml::Value) -> Result<(), String> {
     let path = wtch::config::config_path().ok_or("home directory not found")?;
     let content = std::fs::read_to_string(&path).unwrap_or_default();
     let mut doc: serde_yaml::Value =
@@ -119,14 +112,41 @@ async fn set_debug(enabled: bool, config: State<'_, SharedConfig>) -> Result<(),
             .or_insert_with(|| serde_yaml::Value::Mapping(serde_yaml::Mapping::new()));
         if let Some(gen_map) = general.as_mapping_mut() {
             gen_map.insert(
-                serde_yaml::Value::String("debug".to_string()),
-                serde_yaml::Value::Bool(enabled),
+                serde_yaml::Value::String(key.to_string()),
+                value,
             );
         }
     }
 
     let output = serde_yaml::to_string(&doc).map_err(|e| e.to_string())?;
     std::fs::write(&path, output).map_err(|e| e.to_string())
+}
+
+/// Toggles debug logging.
+#[tauri::command]
+async fn set_debug(enabled: bool, config: State<'_, SharedConfig>) -> Result<(), String> {
+    {
+        let mut cfg = config.write().await;
+        cfg.general.debug = enabled;
+    }
+    wtch::logging::init(enabled);
+    write_general_setting("debug", serde_yaml::Value::Bool(enabled))
+}
+
+/// Returns the current allow_scripts setting.
+#[tauri::command]
+async fn get_allow_scripts(config: State<'_, SharedConfig>) -> Result<bool, String> {
+    Ok(config.read().await.general.allow_scripts)
+}
+
+/// Toggles script execution.
+#[tauri::command]
+async fn set_allow_scripts(enabled: bool, config: State<'_, SharedConfig>) -> Result<(), String> {
+    {
+        let mut cfg = config.write().await;
+        cfg.general.allow_scripts = enabled;
+    }
+    write_general_setting("allow_scripts", serde_yaml::Value::Bool(enabled))
 }
 
 /// Opens the config directory in the system's file explorer.
@@ -216,6 +236,8 @@ fn main() {
             open_config_dir,
             get_debug,
             set_debug,
+            get_allow_scripts,
+            set_allow_scripts,
             reload_config,
             quit_app
         ])

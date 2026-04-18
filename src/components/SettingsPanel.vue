@@ -20,6 +20,7 @@ const presets = ref<PresetInfo[]>([]);
 const presetSearch = ref("");
 const loading = ref(false);
 const debugMode = ref(false);
+const allowScripts = ref(false);
 const appVersion = ref("0.0.0");
 const { currentTheme, setTheme } = useTheme();
 const themeOptions: { value: Theme; label: string }[] = [
@@ -55,6 +56,8 @@ onMounted(async () => {
   await refreshPresets();
   const dbg = await tauriInvoke<boolean>("get_debug");
   if (dbg !== null) debugMode.value = dbg;
+  const scripts = await tauriInvoke<boolean>("get_allow_scripts");
+  if (scripts !== null) allowScripts.value = scripts;
   try {
     if (window.__TAURI_INTERNALS__) {
       const { getVersion } = await import("@tauri-apps/api/app");
@@ -112,6 +115,12 @@ async function onToggleDebug(): Promise<void> {
   const newVal = !debugMode.value;
   await tauriInvoke("set_debug", { enabled: newVal });
   debugMode.value = newVal;
+}
+
+async function onToggleAllowScripts(): Promise<void> {
+  const newVal = !allowScripts.value;
+  await tauriInvoke("set_allow_scripts", { enabled: newVal });
+  allowScripts.value = newVal;
 }
 
 function openUrl(url: string): void {
@@ -226,6 +235,21 @@ function openUrl(url: string): void {
               @click="setTheme(opt.value)"
             >{{ opt.label }}</button>
           </div>
+        </div>
+        <div class="row" title="Allow watches to run shell commands (scripts). You are responsible for any commands you configure.">
+          <span class="row-label">Allow scripts</span>
+          <button
+            class="toggle-btn"
+            :class="{ 'toggle-btn--on': allowScripts, 'toggle-btn--warn': allowScripts }"
+            type="button"
+            :aria-pressed="allowScripts"
+            @click="onToggleAllowScripts"
+          >
+            <span class="toggle-thumb" />
+          </button>
+        </div>
+        <div v-if="allowScripts" class="setting-warn">
+          Scripts can execute arbitrary commands on your system. Only enable this if you trust your config.
         </div>
         <div class="row">
           <span class="row-label">Debug logging</span>
@@ -507,6 +531,17 @@ function openUrl(url: string): void {
 .theme-btn--active {
   background: var(--accent);
   color: white;
+}
+
+.toggle-btn--warn {
+  background: var(--warning);
+}
+
+.setting-warn {
+  font-size: 10px;
+  color: var(--warning);
+  padding: 2px 0 4px;
+  line-height: 1.4;
 }
 
 .actions-divider {

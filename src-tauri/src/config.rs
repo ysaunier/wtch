@@ -153,6 +153,11 @@ pub struct General {
 
     #[serde(default)]
     pub debug: bool,
+
+    /// Allow script execution (type: script watches). Disabled by default for
+    /// security. When disabled, only HTTP and adapter watches are evaluated.
+    #[serde(default)]
+    pub allow_scripts: bool,
 }
 
 fn default_poll_interval() -> String {
@@ -175,6 +180,7 @@ impl Default for General {
             notify: default_notify(),
             notify_cooldown: default_notify_cooldown(),
             debug: false,
+            allow_scripts: false,
         }
     }
 }

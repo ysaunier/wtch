@@ -439,6 +439,28 @@ pub async fn evaluate_watch(watch: &Watch, config: &Config) -> WatchState {
         .clone()
         .unwrap_or(WatchType::Script);
 
+    // Block script execution when allow_scripts is disabled
+    if watch_type == WatchType::Script && !config.general.allow_scripts {
+        crate::logging::warn(&format!("[watch] {name}: script execution blocked (enable allow_scripts in config)"));
+        let display = watch
+            .display
+            .as_ref()
+            .map(|d| resolve_display(d, &serde_json::Value::Null))
+            .unwrap_or_else(|| fallback_display(&WatchStatus::Unknown));
+
+        return WatchState {
+            name,
+            status: WatchStatus::Unknown,
+            data: serde_json::Value::Null,
+            display,
+            details: vec![],
+            expand: watch.expand,
+            url: watch.link.clone().or_else(|| watch.url.clone()),
+            last_check: Some(Utc::now().to_rfc3339()),
+            error_message: Some("Script execution disabled. Enable allow_scripts in config.".to_string()),
+        };
+    }
+
     let provider_result = run_provider(watch, config, &watch_type).await;
 
     let last_check = Some(Utc::now().to_rfc3339());
