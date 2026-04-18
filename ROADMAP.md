@@ -39,3 +39,7 @@ This is a solo project. Progress depends on available time. Contributions and fe
 - [x] About page with version and links
 - [x] Light and dark themes
 - [x] Desktop notifications on status changes
+- [x] Hidden console windows on Windows (no cmd/powershell flash)
+- [x] Script execution opt-in (`allow_scripts`, disabled by default)
+- [x] Conventional commits lint in CI
+- [x] Auto-sync version from git tag in release CI
