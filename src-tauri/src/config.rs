@@ -155,7 +155,8 @@ pub struct General {
     pub debug: bool,
 
     /// Allow script execution (type: script watches). Disabled by default for
-    /// security. When disabled, only HTTP and adapter watches are evaluated.
+    /// security. When disabled, only HTTP-based watches (including
+    /// statuspage) and adapter watches are evaluated.
     #[serde(default)]
     pub allow_scripts: bool,
 }

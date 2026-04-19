@@ -125,12 +125,13 @@ fn write_general_setting(key: &str, value: serde_yaml::Value) -> Result<(), Stri
 /// Toggles debug logging.
 #[tauri::command]
 async fn set_debug(enabled: bool, config: State<'_, SharedConfig>) -> Result<(), String> {
+    write_general_setting("debug", serde_yaml::Value::Bool(enabled))?;
     {
         let mut cfg = config.write().await;
         cfg.general.debug = enabled;
     }
     wtch::logging::init(enabled);
-    write_general_setting("debug", serde_yaml::Value::Bool(enabled))
+    Ok(())
 }
 
 /// Returns the current allow_scripts setting.
@@ -142,11 +143,12 @@ async fn get_allow_scripts(config: State<'_, SharedConfig>) -> Result<bool, Stri
 /// Toggles script execution.
 #[tauri::command]
 async fn set_allow_scripts(enabled: bool, config: State<'_, SharedConfig>) -> Result<(), String> {
+    write_general_setting("allow_scripts", serde_yaml::Value::Bool(enabled))?;
     {
         let mut cfg = config.write().await;
         cfg.general.allow_scripts = enabled;
     }
-    write_general_setting("allow_scripts", serde_yaml::Value::Bool(enabled))
+    Ok(())
 }
 
 /// Opens the config directory in the system's file explorer.

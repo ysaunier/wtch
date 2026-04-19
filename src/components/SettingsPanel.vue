@@ -119,8 +119,10 @@ async function onToggleDebug(): Promise<void> {
 
 async function onToggleAllowScripts(): Promise<void> {
   const newVal = !allowScripts.value;
-  await tauriInvoke("set_allow_scripts", { enabled: newVal });
-  allowScripts.value = newVal;
+  const result = await tauriInvoke("set_allow_scripts", { enabled: newVal });
+  if (result !== null || window.__TAURI_INTERNALS__) {
+    allowScripts.value = newVal;
+  }
 }
 
 function openUrl(url: string): void {

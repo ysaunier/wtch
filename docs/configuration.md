@@ -48,7 +48,7 @@ watch:
 | `default_shell` | string | none | Default shell used for script watches. |
 | `notify` | bool | `true` | Enable desktop notifications on status changes. |
 | `notify_cooldown` | string | `"5m"` | Minimum time between repeated notifications for the same watch. |
-| `allow_scripts` | bool | `false` | Allow script execution (type: script watches). When disabled, only HTTP and adapter watches run. |
+| `allow_scripts` | bool | `false` | Allow script execution (type: script watches). When disabled, only HTTP, Statuspage, and adapter watches run. |
 | `debug` | bool | `false` | Enable debug logging to `~/.config/wtch/<date>.log`. |
 
 ## Shells
