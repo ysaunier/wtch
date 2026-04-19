@@ -40,6 +40,13 @@ impl ShellRunner {
         }
         cmd.arg(command);
 
+        // Hide console window on Windows (prevents cmd/powershell/wsl flash)
+        #[cfg(target_os = "windows")]
+        {
+            const CREATE_NO_WINDOW: u32 = 0x08000000;
+            cmd.creation_flags(CREATE_NO_WINDOW);
+        }
+
         crate::logging::debug(&format!("[shell] {shell_name}: {} {} {command}",
             shell.command, shell.args.join(" "),
         ));
